@@ -41,9 +41,9 @@ def layer_norm(x, g, b, axis=1, segments=1, epsilon=1e-6, relu=False, atomics=Tr
             segK = slice(s*K, s*K+K)
             segX = [segK if d == axis else slice(None) for d in range(x.shape.ndims)]
 
-            mean, var = tf.nn.moments(x[segX], [axis], keep_dims=True)
-            # mean = tf.reduce_mean(x[segX], axis=[axis], keepdims=True)
-            # var  = tf.reduce_mean(tf.square(x[segX] - mean), axis=[axis], keepdims=True)
+            # mean, var = tf.nn.moments(x[segX], [axis], keep_dims=True)
+            mean = tf.reduce_mean(x[segX], axis=[axis], keepdims=True)
+            var  = tf.reduce_mean(tf.square(x[segX] - mean), axis=[axis], keepdims=True)
             norm = (x[segX] - mean) * tf.rsqrt(var + epsilon)
             ys.append(norm * g[segK] + b[segK])
 
